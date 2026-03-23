@@ -1,7 +1,8 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import '../models/expense.dart';
+import '../models/transaction.dart' as model;
 import '../models/user.dart';
 
 class DatabaseHelper {
@@ -10,10 +11,11 @@ class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._internal();
 
   static const _databaseName = 'prm393_expense_manager.db';
-  static const _databaseVersion = 4;
+  static const _databaseVersion =4;
 
   static const userTable = 'users';
   static const expenseTable = 'expenses';
+  static const transactionTable = 'transactions';
 
   Database? _db;
 
@@ -61,6 +63,19 @@ class DatabaseHelper {
         FOREIGN KEY (userId) REFERENCES $userTable (id) ON DELETE CASCADE
       )
     ''');
+
+    await db.execute('''
+      CREATE TABLE $transactionTable (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        type TEXT NOT NULL,
+        amount REAL NOT NULL,
+        category TEXT,
+        note TEXT,
+        date TEXT NOT NULL,
+        userId INTEGER NOT NULL,
+        FOREIGN KEY (userId) REFERENCES $userTable (id) ON DELETE CASCADE
+      )
+    ''');
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
@@ -77,6 +92,64 @@ class DatabaseHelper {
           FOREIGN KEY (userId) REFERENCES $userTable (id) ON DELETE CASCADE
         )
       ''');
+    }
+
+    // Create transactions table if it doesn't exist
+    if (oldVersion < 6) {
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS $transactionTable (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          type TEXT NOT NULL,
+          amount REAL NOT NULL,
+          category TEXT,
+          note TEXT,
+          date TEXT NOT NULL,
+          userId INTEGER NOT NULL,
+          FOREIGN KEY (userId) REFERENCES $userTable (id) ON DELETE CASCADE
+        )
+      ''');
+    }
+
+    // Migrate existing transactions table to make category nullable
+    if (oldVersion == 6) {
+      // Check if the table exists and has the old schema
+      final tables = await db.rawQuery(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='$transactionTable'"
+      );
+      
+      if (tables.isNotEmpty) {
+        // Get table info to check if category is NOT NULL
+        final tableInfo = await db.rawQuery("PRAGMA table_info($transactionTable)");
+        final categoryColumn = tableInfo.firstWhere(
+          (col) => col['name'] == 'category',
+          orElse: () => {},
+        );
+        
+        // If category column is NOT NULL, migrate it
+        if (categoryColumn['notnull'] == 1) {
+          await db.execute('''
+            CREATE TABLE ${transactionTable}_new (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              type TEXT NOT NULL,
+              amount REAL NOT NULL,
+              category TEXT,
+              note TEXT,
+              date TEXT NOT NULL,
+              userId INTEGER NOT NULL,
+              FOREIGN KEY (userId) REFERENCES $userTable (id) ON DELETE CASCADE
+            )
+          ''');
+          
+          await db.execute('''
+            INSERT INTO ${transactionTable}_new 
+            SELECT id, type, amount, category, note, date, userId 
+            FROM $transactionTable
+          ''');
+          
+          await db.execute('DROP TABLE $transactionTable');
+          await db.execute('ALTER TABLE ${transactionTable}_new RENAME TO $transactionTable');
+        }
+      }
     }
 
     if (oldVersion < 4) {
@@ -175,5 +248,95 @@ class DatabaseHelper {
   Future<int> deleteUser(int userId) async {
     final db = await database;
     return db.delete(userTable, where: 'id = ?', whereArgs: [userId]);
+  }
+
+  // Transaction CRUD operations
+  Future<int> insertTransaction(model.Transaction transaction) async {
+    final db = await database;
+    return db.insert(transactionTable, transaction.toMap());
+  }
+
+  Future<List<model.Transaction>> getTransactionsByUser(int userId) async {
+    final db = await database;
+    final result = await db.query(
+      transactionTable,
+      where: 'userId = ?',
+      whereArgs: [userId],
+      orderBy: 'date DESC, id DESC',
+    );
+    return result.map(model.Transaction.fromMap).toList();
+  }
+
+  Future<List<model.Transaction>> getTransactionsByUserAndType(int userId, model.TransactionType type) async {
+    final db = await database;
+    final result = await db.query(
+      transactionTable,
+      where: 'userId = ? AND type = ?',
+      whereArgs: [userId, type.name],
+      orderBy: 'date DESC, id DESC',
+    );
+    return result.map(model.Transaction.fromMap).toList();
+  }
+
+  Future<List<model.Transaction>> searchTransactions(int userId, String query) async {
+    final db = await database;
+    final result = await db.query(
+      transactionTable,
+      where: 'userId = ? AND (category LIKE ? OR note LIKE ?)',
+      whereArgs: [userId, '%$query%', '%$query%'],
+      orderBy: 'date DESC, id DESC',
+    );
+    return result.map(model.Transaction.fromMap).toList();
+  }
+
+  Future<List<model.Transaction>> getTransactionsByDateRange(int userId, DateTime startDate, DateTime endDate) async {
+    final db = await database;
+    final result = await db.query(
+      transactionTable,
+      where: 'userId = ? AND date BETWEEN ? AND ?',
+      whereArgs: [userId, startDate.toIso8601String(), endDate.toIso8601String()],
+      orderBy: 'date DESC, id DESC',
+    );
+    return result.map(model.Transaction.fromMap).toList();
+  }
+
+  Future<double> getTotalByUserAndType(int userId, model.TransactionType type) async {
+    final db = await database;
+    final result = await db.rawQuery(
+      'SELECT SUM(amount) AS total FROM $transactionTable WHERE userId = ? AND type = ?',
+      [userId, type.name],
+    );
+
+    final total = result.first['total'];
+    if (total == null) return 0;
+    return (total as num).toDouble();
+  }
+
+  Future<int> updateTransaction(model.Transaction transaction) async {
+    final db = await database;
+    return db.update(
+      transactionTable,
+      transaction.toMap(),
+      where: 'id = ?',
+      whereArgs: [transaction.id],
+    );
+  }
+
+  Future<int> deleteTransaction(int transactionId) async {
+    final db = await database;
+    return db.delete(transactionTable, where: 'id = ?', whereArgs: [transactionId]);
+  }
+
+  Future<model.Transaction?> getTransactionById(int transactionId) async {
+    final db = await database;
+    final result = await db.query(
+      transactionTable,
+      where: 'id = ?',
+      whereArgs: [transactionId],
+      limit: 1,
+    );
+
+    if (result.isEmpty) return null;
+    return model.Transaction.fromMap(result.first);
   }
 }

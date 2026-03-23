@@ -4,6 +4,7 @@ import 'account_screen.dart';
 import 'budget_screen.dart';
 import 'home_screen.dart';
 import 'transaction_book_screen.dart';
+import 'add_transaction_screen.dart';
 
 class MainShellScreen extends StatefulWidget {
   final int userId;
@@ -21,6 +22,13 @@ class MainShellScreen extends StatefulWidget {
 
 class _MainShellScreenState extends State<MainShellScreen> {
   int _selectedIndex = 0;
+  int _dataRefreshToken = 0;
+
+  void _onTransactionChanged() {
+    setState(() {
+      _dataRefreshToken++;
+    });
+  }
 
   void _onTapTab(int index) {
     setState(() {
@@ -31,8 +39,17 @@ class _MainShellScreenState extends State<MainShellScreen> {
   @override
   Widget build(BuildContext context) {
     final tabs = [
-      HomeScreen(userId: widget.userId, username: widget.username),
-      const TransactionBookScreen(),
+      HomeScreen(
+        userId: widget.userId,
+        username: widget.username,
+        refreshToken: _dataRefreshToken,
+      ),
+      TransactionBookScreen(
+        key: ValueKey(_dataRefreshToken),
+        userId: widget.userId,
+        refreshToken: _dataRefreshToken,
+        onTransactionChanged: _onTransactionChanged,
+      ),
       const BudgetScreen(),
       AccountScreen(userId: widget.userId, username: widget.username),
     ];
@@ -50,10 +67,15 @@ class _MainShellScreenState extends State<MainShellScreen> {
             backgroundColor: const Color(0xFF34C759),
             elevation: 2,
             shape: const CircleBorder(),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Mở màn hình thêm giao dịch')),
+            onPressed: () async {
+              final result = await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => AddTransactionScreen(userId: widget.userId),
+                ),
               );
+              if (result == true) {
+                _onTransactionChanged();
+              }
             },
             child: const Icon(Icons.add, color: Colors.white, size: 42),
           ),
