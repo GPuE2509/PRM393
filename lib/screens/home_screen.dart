@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+import '../data/database_helper.dart';
+import '../models/transaction.dart' as model;
 
 class HomeScreen extends StatefulWidget {
   final int userId;
   final String username;
+  final int refreshToken;
 
-  const HomeScreen({super.key, required this.userId, required this.username});
+  const HomeScreen({
+    super.key,
+    required this.userId,
+    required this.username,
+    this.refreshToken = 0,
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -13,6 +23,51 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool _isNarrow(BuildContext context) {
     return MediaQuery.sizeOf(context).width < 390;
+  }
+
+  double _totalExpense = 0;
+  double _totalIncome = 0;
+  double _balance = 0;
+  bool _isLoading = true;
+
+  String _formatNumber(double number) {
+    return NumberFormat('#,###').format(number);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTransactionData();
+  }
+
+  @override
+  void didUpdateWidget(covariant HomeScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.refreshToken != widget.refreshToken) {
+      _loadTransactionData();
+    }
+  }
+
+  Future<void> _loadTransactionData() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final totalExpense = await DatabaseHelper.instance.getTotalByUserAndType(widget.userId, model.TransactionType.expense);
+      final totalIncome = await DatabaseHelper.instance.getTotalByUserAndType(widget.userId, model.TransactionType.income);
+      
+      setState(() {
+        _totalExpense = totalExpense;
+        _totalIncome = totalIncome;
+        _balance = _totalIncome - _totalExpense;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   Widget _sectionTitle(String title, String actionText) {
@@ -85,7 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Flexible(
                 child: Text(
-                  '-3,505,000 đ',
+                  '${NumberFormat('#,###').format(_balance)} đ',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -114,7 +169,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
               Expanded(
                 child: Column(
@@ -129,7 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     SizedBox(height: 6),
                     Text(
-                      '0',
+                      _formatNumber(_totalExpense),
                       style: TextStyle(
                         color: Color(0xFFFF5D6E),
                         fontSize: 42,
@@ -152,7 +207,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     SizedBox(height: 6),
                     Text(
-                      '0',
+                      _formatNumber(_totalIncome),
                       style: TextStyle(
                         color: Color(0xFF2EC1F0),
                         fontSize: 42,
@@ -339,7 +394,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           fit: BoxFit.scaleDown,
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            '-3,505,000 đ',
+                            '${NumberFormat('#,###').format(_balance)} đ',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: isNarrow ? 46 : 54,
@@ -432,7 +487,10 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 18),
             _walletCard(context),
             const SizedBox(height: 22),
-            _sectionTitle('Báo cáo tháng này', 'Xem báo cáo'),
+            if (_isLoading)
+              const Center(child: CircularProgressIndicator())
+            else
+              _sectionTitle('Báo cáo tháng này', 'Xem báo cáo'),
             _monthlyReportCard(context),
             const SizedBox(height: 24),
             _premiumBanner(context),
