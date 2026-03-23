@@ -22,7 +22,7 @@ class AppButton extends StatelessWidget {
         style: FilledButton.styleFrom(
           backgroundColor: const Color(0xFF34C759),
           foregroundColor: Colors.white,
-          disabledBackgroundColor: const Color(0xFF6B6D7A),
+          disabledBackgroundColor: const Color(0xFF9FD9AE),
           padding: const EdgeInsets.symmetric(vertical: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),

@@ -200,7 +200,7 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
             onPressed: () => Navigator.of(context).pop(true),
             child: const Text(
               'Xóa tất cả',
-              style: TextStyle(color: Colors.red),
+              style: TextStyle(color: Color(0xFF34C759)),
             ),
           ),
         ],
@@ -236,9 +236,9 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF2C5F8D),
+        backgroundColor: const Color(0xFF34C759),
         elevation: 0,
         title: const Text(
           'Sổ giao dịch',
@@ -297,7 +297,7 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
           if (_startDate != null || _endDate != null)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              color: Colors.blue[50],
+              color: const Color(0xFFEFF8F1),
               child: Row(
                 children: [
                   const Icon(Icons.filter_list, size: 16),
@@ -305,7 +305,7 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
                   Expanded(
                     child: Text(
                       'Đang áp dụng bộ lọc',
-                      style: TextStyle(color: Colors.blue[800]),
+                      style: TextStyle(color: Color(0xFF2D7D46)),
                     ),
                   ),
                   TextButton(
@@ -368,7 +368,7 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
             widget.onTransactionChanged?.call();
           }
         },
-        backgroundColor: const Color(0xFF2C5F8D),
+        backgroundColor: const Color(0xFF34C759),
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );
@@ -376,14 +376,14 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
 
   Widget _buildTransactionCard(model.Transaction transaction) {
     final isExpense = transaction.type == model.TransactionType.expense;
-    final amountColor = isExpense ? Colors.red : Colors.green;
+    final amountColor = isExpense ? const Color(0xFF34C759) : const Color(0xFF34C759);
     final formattedAmount = NumberFormat('#,##0.##').format(transaction.amount);
     final signedAmount = '${isExpense ? '-' : '+'}$formattedAmount VND';
     final isSelected = _selectedTransactions.contains(transaction.id!);
     
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      color: isSelected ? Colors.blue.withValues(alpha: 0.1) : null,
+      color: isSelected ? const Color(0xFFEFF8F1) : null,
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: amountColor.withValues(alpha: 0.1),
@@ -431,7 +431,7 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
               },
             )
           : IconButton(
-              icon: const Icon(Icons.delete, color: Colors.red),
+              icon: const Icon(Icons.delete, color: Color(0xFF34C759)),
               onPressed: () async {
                 final confirmed = await showDialog<bool>(
                   context: context,
@@ -445,7 +445,7 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
                       ),
                       TextButton(
                         onPressed: () => Navigator.of(context).pop(true),
-                        child: const Text('OK', style: TextStyle(color: Colors.red)),
+                        child: const Text('OK', style: TextStyle(color: Color(0xFF34C759))),
                       ),
                     ],
                   ),

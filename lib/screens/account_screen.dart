@@ -71,7 +71,7 @@ class _AccountScreenState extends State<AccountScreen> {
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFFEDEEF1),
+                          color: Color(0xFF1F2937),
                         ),
                       ),
                       const SizedBox(height: 14),
@@ -90,10 +90,10 @@ class _AccountScreenState extends State<AccountScreen> {
                           errorText: oldPasswordError,
                           prefixIcon: const Icon(Icons.lock_outline, color: Color(0xFF34C759)),
                           filled: true,
-                          fillColor: const Color(0xFF191B22),
+                          fillColor: Colors.white,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Color(0xFF3A4553)),
+                            borderSide: const BorderSide(color: Color(0xFFDCEAD7)),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -101,14 +101,14 @@ class _AccountScreenState extends State<AccountScreen> {
                           ),
                           errorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Color(0xFFEF5668)),
+                            borderSide: const BorderSide(color: Color(0xFF34C759)),
                           ),
                           focusedErrorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Color(0xFFEF5668), width: 2),
+                            borderSide: const BorderSide(color: Color(0xFF34C759), width: 2),
                           ),
                         ),
-                        style: const TextStyle(color: Color(0xFFEDEEF1)),
+                        style: const TextStyle(color: Color(0xFF1F2937)),
                       ),
                       const SizedBox(height: 12),
                       TextField(
@@ -125,10 +125,10 @@ class _AccountScreenState extends State<AccountScreen> {
                           errorText: newPasswordError,
                           prefixIcon: const Icon(Icons.lock_outline, color: Color(0xFF34C759)),
                           filled: true,
-                          fillColor: const Color(0xFF191B22),
+                          fillColor: Colors.white,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Color(0xFF3A4553)),
+                            borderSide: const BorderSide(color: Color(0xFFDCEAD7)),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -136,11 +136,11 @@ class _AccountScreenState extends State<AccountScreen> {
                           ),
                           errorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Color(0xFFEF5668)),
+                            borderSide: const BorderSide(color: Color(0xFF34C759)),
                           ),
                           focusedErrorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Color(0xFFEF5668), width: 2),
+                            borderSide: const BorderSide(color: Color(0xFF34C759), width: 2),
                           ),
                         ),
                         style: const TextStyle(color: Color(0xFF34C759)),
@@ -160,10 +160,10 @@ class _AccountScreenState extends State<AccountScreen> {
                           errorText: confirmPasswordError,
                           prefixIcon: const Icon(Icons.verified_user_outlined, color: Color(0xFF34C759)),
                           filled: true,
-                          fillColor: const Color(0xFF191B22),
+                          fillColor: Colors.white,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Color(0xFF3A4553)),
+                            borderSide: const BorderSide(color: Color(0xFFDCEAD7)),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -171,14 +171,14 @@ class _AccountScreenState extends State<AccountScreen> {
                           ),
                           errorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Color(0xFFEF5668)),
+                            borderSide: const BorderSide(color: Color(0xFF34C759)),
                           ),
                           focusedErrorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Color(0xFFEF5668), width: 2),
+                            borderSide: const BorderSide(color: Color(0xFF34C759), width: 2),
                           ),
                         ),
-                        style: const TextStyle(color: Color(0xFFEDEEF1)),
+                        style: const TextStyle(color: Color(0xFF1F2937)),
                       ),
                       const SizedBox(height: 14),
                       SizedBox(
@@ -233,7 +233,7 @@ class _AccountScreenState extends State<AccountScreen> {
                           onPressed: () => Navigator.of(dialogContext).pop(false),
                           child: const Text(
                             'Hủy',
-                            style: TextStyle(color: Color(0xFFB8B9C2)),
+                            style: TextStyle(color: Color(0xFF6B7280)),
                           ),
                         ),
                       ),
@@ -349,7 +349,7 @@ class _AccountScreenState extends State<AccountScreen> {
                               ? () => Navigator.of(dialogContext).pop(true)
                               : null,
                           style: FilledButton.styleFrom(
-                            backgroundColor: const Color(0xFFEF5668),
+                            backgroundColor: const Color(0xFF34C759),
                           ),
                           child: const Text('Xóa'),
                         ),
@@ -409,11 +409,11 @@ class _AccountScreenState extends State<AccountScreen> {
         style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
           side: BorderSide(
-            color: isDanger ? const Color(0xFFEF5668) : const Color(0xFF2E323C),
+            color: const Color(0xFF34C759),
           ),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-          foregroundColor: isDanger ? const Color(0xFFFF7D8C) : const Color(0xFFE7E8ED),
-          backgroundColor: const Color(0xFF191B22),
+          foregroundColor: const Color(0xFF2D7D46),
+          backgroundColor: Colors.white,
           alignment: Alignment.centerLeft,
         ),
         icon: Icon(icon, size: 20),
@@ -436,7 +436,7 @@ class _AccountScreenState extends State<AccountScreen> {
             const Text(
               'Tài khoản',
               style: TextStyle(
-                color: Color(0xFFEDEEF1),
+                color: Color(0xFF1F2937),
                 fontSize: 30,
                 fontWeight: FontWeight.w800,
               ),
@@ -446,17 +446,18 @@ class _AccountScreenState extends State<AccountScreen> {
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFF191B22),
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: const Color(0xFFDCEAD7)),
               ),
               child: Row(
                 children: [
                   const CircleAvatar(
                     radius: 24,
-                    backgroundColor: Color(0xFF2B2F3A),
+                    backgroundColor: Color(0xFFEFF8F1),
                     child: Icon(
                       Icons.person_outline,
-                      color: Color(0xFFEDEEF1),
+                      color: Color(0xFF34C759),
                       size: 28,
                     ),
                   ),
@@ -465,7 +466,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     child: Text(
                       widget.username,
                       style: const TextStyle(
-                        color: Color(0xFFEDEEF1),
+                        color: Color(0xFF1F2937),
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
                       ),
