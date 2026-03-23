@@ -26,7 +26,7 @@ class Prm393App extends StatelessWidget {
   const Prm393App({super.key});
 
   ThemeData _buildTheme() {
-    const seed = Color(0xFF0F766E);
+    const seed = Color(0xFF34C759);
     final base = ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
@@ -38,17 +38,18 @@ class Prm393App extends StatelessWidget {
     final textTheme = GoogleFonts.plusJakartaSansTextTheme(base.textTheme);
 
     return base.copyWith(
-      scaffoldBackgroundColor: const Color(0xFFF3F6F8),
+      scaffoldBackgroundColor: Colors.white,
       textTheme: textTheme,
       appBarTheme: AppBarTheme(
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color(0xFF34C759),
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: false,
         titleTextStyle: textTheme.titleLarge?.copyWith(
           fontWeight: FontWeight.w700,
-          color: const Color(0xFF0E2433),
+          color: Colors.white,
         ),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       cardTheme: CardThemeData(
         elevation: 0,
@@ -68,16 +69,16 @@ class Prm393App extends StatelessWidget {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: Color(0xFFE3EBF0)),
+          borderSide: const BorderSide(color: Color(0xFFDCEAD7)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: Color(0xFF0F766E), width: 1.4),
+          borderSide: const BorderSide(color: Color(0xFF34C759), width: 1.4),
         ),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          backgroundColor: const Color(0xFF0F766E),
+          backgroundColor: const Color(0xFF34C759),
           foregroundColor: Colors.white,
           minimumSize: const Size.fromHeight(48),
           shape: RoundedRectangleBorder(
@@ -91,6 +92,10 @@ class Prm393App extends StatelessWidget {
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+        backgroundColor: Color(0xFF34C759),
+        foregroundColor: Colors.white,
       ),
     );
   }

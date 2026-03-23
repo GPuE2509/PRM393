@@ -9,7 +9,7 @@ class BudgetScreen extends StatelessWidget {
       child: Text(
         'Ngân sách',
         style: TextStyle(
-          color: Color(0xFFEDEEF1),
+          color: Color(0xFF34C759),
           fontSize: 28,
           fontWeight: FontWeight.w700,
         ),

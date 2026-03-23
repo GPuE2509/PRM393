@@ -55,7 +55,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
     ];
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       extendBody: true,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Transform.translate(
@@ -116,8 +116,8 @@ class _BottomNavigation extends StatelessWidget {
     return Container(
       height: 92,
       decoration: const BoxDecoration(
-        color: Color(0xFF26282E),
-        border: Border(top: BorderSide(color: Color(0xFF2F3139))),
+        color: Colors.white,
+        border: Border(top: BorderSide(color: Color(0xFFDCEAD7))),
       ),
       child: Row(
         children: List.generate(5, (index) {
@@ -139,8 +139,8 @@ class _BottomNavigation extends StatelessWidget {
                     Icon(
                       icons[index],
                       color: selected
-                          ? const Color(0xFFE6E7EB)
-                          : const Color(0xFF81838D),
+                          ? const Color(0xFF34C759)
+                          : const Color(0xFF8AA18F),
                       size: 31,
                     ),
                     const SizedBox(height: 6),
@@ -151,8 +151,8 @@ class _BottomNavigation extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: selected
-                            ? const Color(0xFFE6E7EB)
-                            : const Color(0xFF81838D),
+                          ? const Color(0xFF34C759)
+                          : const Color(0xFF8AA18F),
                         fontSize: 12,
                         height: 1.1,
                         fontWeight: selected

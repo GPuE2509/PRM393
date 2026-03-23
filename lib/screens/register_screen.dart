@@ -79,14 +79,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Scaffold(
       body: SafeArea(
         child: Container(
-          color: const Color(0xFF191B22),
+          color: Colors.white,
           child: Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 480),
                 child: Card(
-                  color: const Color(0xFF252C36),
+                  color: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                     side: const BorderSide(
@@ -94,6 +94,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       width: 1.5,
                     ),
                   ),
+                  elevation: 0,
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(18, 22, 18, 18),
                     child: Form(
@@ -107,7 +108,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               onPressed: () => Navigator.pop(context),
                               icon: const Icon(
                                 Icons.arrow_back_rounded,
-                                color: Color(0xFFEDEEF1),
+                                color: Color(0xFF1F2937),
                               ),
                               tooltip: 'Quay lại',
                             ),
@@ -115,7 +116,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           Text(
                             'Tạo tài khoản',
                             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                              color: const Color(0xFFEDEEF1),
+                              color: const Color(0xFF1F2937),
                               fontWeight: FontWeight.w700,
                             ),
                           ),
@@ -123,7 +124,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           Text(
                             'Bắt đầu quản lý chi tiêu cá nhân ngay hôm nay',
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: const Color(0xFFB8B9C2),
+                              color: const Color(0xFF6B7280),
                             ),
                           ),
                           const SizedBox(height: 18),

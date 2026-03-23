@@ -33,22 +33,22 @@ class AppInput extends StatelessWidget {
       textInputAction: textInputAction,
       validator: validator,
       onFieldSubmitted: onFieldSubmitted,
-      style: const TextStyle(color: Color(0xFFEDEEF1)),
+      style: const TextStyle(color: Color(0xFF1F2937)),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Color(0xFFB8B9C2)),
+        labelStyle: const TextStyle(color: Color(0xFF6B7280)),
         hintText: hint,
-        hintStyle: const TextStyle(color: Color(0xFF6B6D7A)),
+        hintStyle: const TextStyle(color: Color(0xFF9CA3AF)),
         prefixIcon: Icon(icon, color: const Color(0xFF34C759)),
         filled: true,
-        fillColor: const Color(0xFF191B22),
+        fillColor: Colors.white,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: Color(0xFF34488A)),
+          borderSide: const BorderSide(color: Color(0xFFDCEAD7)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: Color(0xFF3A4553)),
+          borderSide: const BorderSide(color: Color(0xFFDCEAD7)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),

@@ -86,14 +86,14 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: SafeArea(
         child: Container(
-          color: const Color(0xFF191B22),
+          color: Colors.white,
           child: Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 24),
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 460),
                 child: Card(
-                  color: const Color(0xFF252C36),
+                  color: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                     side: const BorderSide(
@@ -101,6 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: 1.5,
                     ),
                   ),
+                  elevation: 0,
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(18, 22, 18, 18),
                     child: Form(
@@ -125,7 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           Text(
                             'Chào mừng đến PRM393',
                             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                              color: const Color(0xFFEDEEF1),
+                              color: const Color(0xFF1F2937),
                               fontWeight: FontWeight.w700,
                             ),
                           ),
@@ -133,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           Text(
                             'Quản lý chi tiêu, kiểm soát ngân sách',
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: const Color(0xFFB8B9C2),
+                              color: const Color(0xFF6B7280),
                             ),
                           ),
                           const SizedBox(height: 18),

@@ -77,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Text(
             title,
             style: const TextStyle(
-              color: Color(0xFF8E8E95),
+              color: Color(0xFF2D7D46),
               fontSize: 20,
               fontWeight: FontWeight.w700,
             ),
@@ -104,13 +104,14 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       padding: const EdgeInsets.fromLTRB(18, 18, 18, 14),
       decoration: BoxDecoration(
-        color: const Color(0xFF191B22),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(26),
+        border: Border.all(color: const Color(0xFFDCEAD7)),
       ),
       child: Column(
         children: [
           _sectionTitle('Ví của tôi', 'Xem tất cả'),
-          const Divider(color: Color(0xFF2A2D35), height: 16),
+          const Divider(color: Color(0xFFDCEAD7), height: 16),
           const SizedBox(height: 10),
           Row(
             children: [
@@ -118,12 +119,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 width: 54,
                 height: 54,
                 decoration: const BoxDecoration(
-                  color: Color(0xFF234660),
+                  color: Color(0xFFEFF8F1),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
                   Icons.account_balance_wallet_rounded,
-                  color: Color(0xFFFF8F3A),
+                  color: Color(0xFF34C759),
                   size: 30,
                 ),
               ),
@@ -132,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Text(
                   'Tiền mặt',
                   style: TextStyle(
-                    color: const Color(0xFFF2F2F5),
+                    color: const Color(0xFF1F2937),
                     fontSize: isNarrow ? 20 : 24,
                     fontWeight: FontWeight.w700,
                   ),
@@ -144,7 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    color: const Color(0xFFEFF0F4),
+                    color: const Color(0xFF2D7D46),
                     fontSize: isNarrow ? 18 : 22,
                     fontWeight: FontWeight.w700,
                   ),
@@ -163,8 +164,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       padding: const EdgeInsets.fromLTRB(18, 18, 18, 20),
       decoration: BoxDecoration(
-        color: const Color(0xFF191B22),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(26),
+        border: Border.all(color: const Color(0xFFDCEAD7)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,7 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Text(
                       'Tổng đã chi',
                       style: TextStyle(
-                        color: Color(0xFF9B9EAA),
+                        color: Color(0xFF6B7280),
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
                       ),
@@ -186,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Text(
                       _formatNumber(_totalExpense),
                       style: TextStyle(
-                        color: Color(0xFFFF5D6E),
+                        color: Color(0xFF2D7D46),
                         fontSize: 42,
                         fontWeight: FontWeight.w700,
                       ),
@@ -200,7 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Text(
                       'Tổng thu',
                       style: TextStyle(
-                        color: Color(0xFF9B9EAA),
+                        color: Color(0xFF6B7280),
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
                       ),
@@ -209,7 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Text(
                       _formatNumber(_totalIncome),
                       style: TextStyle(
-                        color: Color(0xFF2EC1F0),
+                        color: Color(0xFF34C759),
                         fontSize: 42,
                         fontWeight: FontWeight.w700,
                       ),
@@ -223,10 +225,10 @@ class _HomeScreenState extends State<HomeScreen> {
           const Row(
             children: [
               Expanded(
-                child: Divider(color: Color(0xFFFF5D6E), thickness: 2),
+                child: Divider(color: Color(0xFF34C759), thickness: 2),
               ),
               Expanded(
-                child: Divider(color: Color(0xFF6B6E77), thickness: 2),
+                child: Divider(color: Color(0xFFDCEAD7), thickness: 2),
               ),
             ],
           ),
@@ -237,7 +239,7 @@ class _HomeScreenState extends State<HomeScreen> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                color: const Color(0xFF2A2D35),
+                color: const Color(0xFFDCEAD7),
                 style: BorderStyle.solid,
               ),
             ),
@@ -245,7 +247,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Text(
                 'Nhập giao dịch để xem báo cáo',
                 style: TextStyle(
-                  color: Color(0xFFD8D9DE),
+                  color: Color(0xFF6B7280),
                   fontSize: 21,
                   fontWeight: FontWeight.w500,
                 ),
@@ -259,27 +261,27 @@ class _HomeScreenState extends State<HomeScreen> {
             spacing: 8,
             runSpacing: 8,
             children: [
-              const Icon(Icons.circle, color: Color(0xFFFF5D6E), size: 16),
+              const Icon(Icons.circle, color: Color(0xFF34C759), size: 16),
               Text(
                 'Tháng này',
                 style: TextStyle(
-                  color: const Color(0xFFA9ABB4),
+                  color: const Color(0xFF6B7280),
                   fontSize: isNarrow ? 14 : 16,
                 ),
               ),
               SizedBox(width: isNarrow ? 2 : 20),
-              const Icon(Icons.circle, color: Color(0xFF8E8F97), size: 16),
+              const Icon(Icons.circle, color: Color(0xFF8AA18F), size: 16),
               Text(
                 'Trung bình 3 tháng trước',
                 style: TextStyle(
-                  color: const Color(0xFFA9ABB4),
+                  color: const Color(0xFF6B7280),
                   fontSize: isNarrow ? 14 : 16,
                 ),
               ),
               const SizedBox(width: 2),
               const CircleAvatar(
                 radius: 11,
-                backgroundColor: Color(0xFF4B4D55),
+                backgroundColor: Color(0xFF34C759),
                 child: Text(
                   '?',
                   style: TextStyle(
@@ -325,9 +327,9 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.circle, color: Color(0xFFE9EAED), size: 12),
+                Icon(Icons.circle, color: Color(0xFF34C759), size: 12),
                 SizedBox(width: 12),
-                Icon(Icons.circle, color: Color(0xFF6C6F79), size: 12),
+                Icon(Icons.circle, color: Color(0xFF8AA18F), size: 12),
               ],
             ),
           ),
@@ -344,7 +346,7 @@ class _HomeScreenState extends State<HomeScreen> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(22),
         gradient: const LinearGradient(
-          colors: [Color(0xFFDA2C76), Color(0xFFF39E21)],
+          colors: [Color(0xFF34C759), Color(0xFF77D88F)],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
         ),
@@ -364,7 +366,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Text(
             '-50%',
             style: TextStyle(
-              color: const Color(0xFFFFE24A),
+              color: const Color(0xFFEFF8F1),
               fontSize: isNarrow ? 50 : 68,
               fontWeight: FontWeight.w900,
             ),
@@ -396,7 +398,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Text(
                             '${NumberFormat('#,###').format(_balance)} đ',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: const Color(0xFF2D7D46),
                               fontSize: isNarrow ? 46 : 54,
                               fontWeight: FontWeight.w800,
                               letterSpacing: -0.8,
@@ -408,7 +410,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         onPressed: () {},
                         icon: Icon(
                           Icons.remove_red_eye_outlined,
-                          color: Colors.white,
+                          color: const Color(0xFF2D7D46),
                           size: isNarrow ? 28 : 32,
                         ),
                       ),
@@ -419,7 +421,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   onPressed: () {},
                   icon: Icon(
                     Icons.search,
-                    color: Colors.white,
+                    color: const Color(0xFF2D7D46),
                     size: isNarrow ? 32 : 38,
                   ),
                 ),
@@ -430,7 +432,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       onPressed: () {},
                       icon: Icon(
                         Icons.notifications_none,
-                        color: Colors.white,
+                        color: const Color(0xFF2D7D46),
                         size: isNarrow ? 32 : 38,
                       ),
                     ),
@@ -441,7 +443,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         width: 24,
                         height: 24,
                         decoration: const BoxDecoration(
-                          color: Color(0xFFFF5A70),
+                          color: Color(0xFF34C759),
                           shape: BoxShape.circle,
                         ),
                         child: const Center(
@@ -465,7 +467,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Text(
                   'Tổng số dư',
                   style: TextStyle(
-                    color: const Color(0xFF8E909A),
+                    color: const Color(0xFF6B7280),
                     fontSize: isNarrow ? 20 : 24,
                     fontWeight: FontWeight.w500,
                   ),
@@ -473,7 +475,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(width: 8),
                 CircleAvatar(
                   radius: 14,
-                  backgroundColor: const Color(0xFF4B4D55),
+                  backgroundColor: const Color(0xFF34C759),
                   child: Text(
                     '?',
                     style: TextStyle(

@@ -26,6 +26,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   double _currentAmount = 0;
   bool _hasEvaluatedExpression = false;
   String _displayText = '0';
+  bool _isTypeLocked = false;
   
   // Dynamic categories that can be extended
   final List<String> _expenseCategories = [
@@ -50,6 +51,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       _calculatorExpression = widget.transaction!.amount.toString();
       _displayText = _formatAmount(_currentAmount);
       _hasEvaluatedExpression = true;
+      _isTypeLocked = true;
       _noteController.text = widget.transaction!.note;
       _selectedCategory = widget.transaction!.category;
       _selectedDate = widget.transaction!.date;
@@ -76,6 +78,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   }
 
   void _onTypeChanged(model.TransactionType type) {
+    if (_isTypeLocked && _selectedType != type) return;
     if (_selectedType == type) return;
     setState(() {
       _selectedType = type;
@@ -102,15 +105,87 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     return formatter.format(amount);
   }
 
+  String _toEditableNumber(double value) {
+    if (value == value.truncateToDouble()) {
+      return value.toInt().toString();
+    }
+    return value.toString();
+  }
+
+  void _lockTypeIfNeeded() {
+    if (_isTypeLocked) return;
+    _isTypeLocked = true;
+  }
+
+  String _formatNumericToken(String token) {
+    if (token.isEmpty) return token;
+
+    final isNegative = token.startsWith('-');
+    final unsigned = isNegative ? token.substring(1) : token;
+    if (unsigned.isEmpty) return token;
+
+    final hasTrailingDot = unsigned.endsWith('.');
+    final parts = unsigned.split('.');
+    final intPartRaw = parts.first;
+    final decimalPart = parts.length > 1 ? parts.sublist(1).join('.') : null;
+
+    final intPart = int.tryParse(intPartRaw);
+    if (intPart == null) return token;
+
+    final formattedInt = NumberFormat('#,###').format(intPart);
+    final sign = isNegative ? '-' : '';
+
+    if (hasTrailingDot) {
+      return '$sign$formattedInt.';
+    }
+    if (decimalPart != null) {
+      return '$sign$formattedInt.$decimalPart';
+    }
+    return '$sign$formattedInt';
+  }
+
+  String _formatExpressionForDisplay(String expr) {
+    if (expr.isEmpty) return '0';
+
+    final buffer = StringBuffer();
+    final numberBuffer = StringBuffer();
+
+    void flushNumber() {
+      if (numberBuffer.isEmpty) return;
+      buffer.write(_formatNumericToken(numberBuffer.toString()));
+      numberBuffer.clear();
+    }
+
+    for (var i = 0; i < expr.length; i++) {
+      final ch = expr[i];
+      final isNumericChar = RegExp(r'[0-9.]').hasMatch(ch);
+      if (isNumericChar) {
+        numberBuffer.write(ch);
+      } else {
+        flushNumber();
+        buffer.write(ch);
+      }
+    }
+    flushNumber();
+
+    return buffer.toString();
+  }
+
   void _onNumberPressed(String number) {
     setState(() {
+      if (number != 'C') {
+        _lockTypeIfNeeded();
+      }
+
       if (number == 'C') {
         _calculatorExpression = '0';
         _currentAmount = 0;
         _hasEvaluatedExpression = false;
       } else if (number == '.') {
         if (_hasEvaluatedExpression) {
-          _calculatorExpression = '0.';
+          if (_canAppendDot()) {
+            _appendToken('.');
+          }
           _hasEvaluatedExpression = false;
         } else {
           if (_canAppendDot()) {
@@ -139,7 +214,11 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       } else if (number == '000') {
         // Add three zeros
         if (_hasEvaluatedExpression) {
-          _calculatorExpression = '000';
+          if (_calculatorExpression == '0') {
+            _calculatorExpression = '000';
+          } else {
+            _appendToken('000');
+          }
           _hasEvaluatedExpression = false;
         } else {
           _appendToken('000');
@@ -147,7 +226,11 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       } else {
         // Number input
         if (_hasEvaluatedExpression) {
-          _calculatorExpression = number;
+          if (_calculatorExpression == '0') {
+            _calculatorExpression = number;
+          } else {
+            _appendToken(number);
+          }
           _hasEvaluatedExpression = false;
         } else if (_calculatorExpression == '0') {
           _calculatorExpression = number;
@@ -156,7 +239,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         }
       }
 
-      _displayText = _calculatorExpression;
+      _displayText = _formatExpressionForDisplay(_calculatorExpression);
     });
   }
 
@@ -211,8 +294,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         _currentAmount = result;
         _amountController.text = result.toString();
         _displayText = _formatAmount(result);
-        _calculatorExpression = result.toString();
+        _calculatorExpression = _toEditableNumber(result);
         _hasEvaluatedExpression = true;
+        _lockTypeIfNeeded();
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -450,9 +534,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF2C5F8D),
+        backgroundColor: const Color(0xFF34C759),
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.close, color: Colors.white),
@@ -471,7 +555,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       body: Column(
         children: [
           Container(
-            color: const Color(0xFF2C5F8D),
+            color: const Color(0xFF34C759),
             padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
             child: Row(
               children: [
@@ -528,7 +612,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                                 Text(
                                   '$_displayText VND',
                                   style: const TextStyle(
-                                    color: Color(0xFF2C5F8D),
+                                    color: Color(0xFF34C759),
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -553,7 +637,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                       child: ElevatedButton(
                         onPressed: _saveTransaction,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF2C5F8D),
+                          backgroundColor: const Color(0xFF34C759),
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
@@ -613,20 +697,27 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     required model.TransactionType type,
   }) {
     final isSelected = _selectedType == type;
+    final isEnabled = !_isTypeLocked || isSelected;
     return GestureDetector(
-      onTap: () => _onTypeChanged(type),
+      onTap: isEnabled ? () => _onTypeChanged(type) : null,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.25),
+          color: isSelected
+              ? Colors.white
+              : (isEnabled
+                  ? Colors.white.withValues(alpha: 0.25)
+                  : Colors.white.withValues(alpha: 0.12)),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Text(
           label,
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: isSelected ? const Color(0xFF2C5F8D) : Colors.white,
+            color: isSelected
+                ? const Color(0xFF34C759)
+                : (isEnabled ? Colors.white : Colors.white70),
             fontSize: 16,
             fontWeight: FontWeight.w700,
           ),
@@ -658,6 +749,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 onChanged: (value) {
                   setState(() {
                     _selectedCategory = value;
+                    if (value != null) {
+                      _lockTypeIfNeeded();
+                    }
                   });
                 },
               ),
@@ -701,6 +795,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                         categories.add(newCategory);
                   }
                   _selectedCategory = newCategory;
+                  _lockTypeIfNeeded();
                   _newCategoryController.clear();
                 });
                 Navigator.of(context).pop();
@@ -716,6 +811,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   Widget _buildNoteInput() {
     return TextField(
       controller: _noteController,
+      onChanged: (value) {
+        if (value.trim().isNotEmpty) {
+          setState(() {
+            _lockTypeIfNeeded();
+          });
+        }
+      },
       decoration: const InputDecoration(
         hintText: 'Nhập ghi chú...',
         border: OutlineInputBorder(),
@@ -884,11 +986,12 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         child: ElevatedButton(
           onPressed: onPressed,
           style: ElevatedButton.styleFrom(
-            backgroundColor: isOperator ? const Color(0xFF2C5F8D) : 
-                           isClear ? Colors.red : 
-                           isBackspace ? Colors.orange :
-                           isInput ? Colors.green : Colors.grey[200],
-            foregroundColor: isOperator || isClear || isBackspace || isInput ? Colors.white : Colors.black,
+            backgroundColor: isOperator || isClear || isBackspace || isInput
+              ? const Color(0xFF34C759)
+              : const Color(0xFFEFF8F1),
+            foregroundColor: isOperator || isClear || isBackspace || isInput
+              ? Colors.white
+              : const Color(0xFF1F2937),
             padding: const EdgeInsets.symmetric(vertical: 16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
