@@ -16,48 +16,147 @@ class AddTransactionScreen extends StatefulWidget {
 
 class _AddTransactionScreenState extends State<AddTransactionScreen> {
   model.TransactionType _selectedType = model.TransactionType.expense;
-  final TextEditingController _amountController = TextEditingController();
+
+  // State for expense tab
+  String _expenseExpression = '0';
+  double _expenseAmount = 0;
+  bool _expenseHasEvaluated = false;
+  String _expenseDisplay = '0';
+  String? _expenseCategory;
+  String _expenseNote = '';
+  DateTime _expenseDate = DateTime.now();
+
+  // State for income tab
+  String _incomeExpression = '0';
+  double _incomeAmount = 0;
+  bool _incomeHasEvaluated = false;
+  String _incomeDisplay = '0';
+  String? _incomeCategory;
+  String _incomeNote = '';
+  DateTime _incomeDate = DateTime.now();
+
+  // Controllers
   final TextEditingController _noteController = TextEditingController();
-  String? _selectedCategory;
-  DateTime _selectedDate = DateTime.now();
-  
-  // Calculator state
-  String _calculatorExpression = '0';
-  double _currentAmount = 0;
-  bool _hasEvaluatedExpression = false;
-  String _displayText = '0';
-  bool _isTypeLocked = false;
-  
+
   // Dynamic categories that can be extended
   final List<String> _expenseCategories = [
-    'Ăn uống', 'Di chuyển', 'Mua sắm', 'Giải trí', 'Sức khỏe', 
+    'Ăn uống', 'Di chuyển', 'Mua sắm', 'Giải trí', 'Sức khỏe',
     'Học tập', 'Hóa đơn', 'Nhà ở', 'Khác'
   ];
 
   final List<String> _incomeCategories = [
     'Lương', 'Thưởng', 'Bán hàng', 'Đầu tư', 'Khác'
   ];
-  
+
   final TextEditingController _newCategoryController = TextEditingController();
+
+  // Getters for current tab state
+  String get _calculatorExpression => _selectedType == model.TransactionType.expense
+      ? _expenseExpression
+      : _incomeExpression;
+
+  set _calculatorExpression(String value) {
+    if (_selectedType == model.TransactionType.expense) {
+      _expenseExpression = value;
+    } else {
+      _incomeExpression = value;
+    }
+  }
+
+  double get _currentAmount => _selectedType == model.TransactionType.expense
+      ? _expenseAmount
+      : _incomeAmount;
+
+  set _currentAmount(double value) {
+    if (_selectedType == model.TransactionType.expense) {
+      _expenseAmount = value;
+    } else {
+      _incomeAmount = value;
+    }
+  }
+
+  bool get _hasEvaluatedExpression => _selectedType == model.TransactionType.expense
+      ? _expenseHasEvaluated
+      : _incomeHasEvaluated;
+
+  set _hasEvaluatedExpression(bool value) {
+    if (_selectedType == model.TransactionType.expense) {
+      _expenseHasEvaluated = value;
+    } else {
+      _incomeHasEvaluated = value;
+    }
+  }
+
+  String get _displayText => _selectedType == model.TransactionType.expense
+      ? _expenseDisplay
+      : _incomeDisplay;
+
+  set _displayText(String value) {
+    if (_selectedType == model.TransactionType.expense) {
+      _expenseDisplay = value;
+    } else {
+      _incomeDisplay = value;
+    }
+  }
+
+  String? get _selectedCategory => _selectedType == model.TransactionType.expense
+      ? _expenseCategory
+      : _incomeCategory;
+
+  set _selectedCategory(String? value) {
+    if (_selectedType == model.TransactionType.expense) {
+      _expenseCategory = value;
+    } else {
+      _incomeCategory = value;
+    }
+  }
+
+  DateTime get _selectedDate => _selectedType == model.TransactionType.expense
+      ? _expenseDate
+      : _incomeDate;
+
+  set _selectedDate(DateTime value) {
+    if (_selectedType == model.TransactionType.expense) {
+      _expenseDate = value;
+    } else {
+      _incomeDate = value;
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    
+
+    // Initialize default categories for both tabs
+    _expenseCategory = 'Ăn uống';
+    _incomeCategory = 'Lương';
+
     if (widget.transaction != null) {
+      // If editing, set data for the specific type
       _selectedType = widget.transaction!.type;
-      _amountController.text = widget.transaction!.amount.toString();
-      _currentAmount = widget.transaction!.amount;
-      _calculatorExpression = widget.transaction!.amount.toString();
-      _displayText = _formatAmount(_currentAmount);
-      _hasEvaluatedExpression = true;
-      _isTypeLocked = true;
-      _noteController.text = widget.transaction!.note;
-      _selectedCategory = widget.transaction!.category;
-      _selectedDate = widget.transaction!.date;
-    } else {
-      _selectedCategory = _getDefaultCategoryForType(_selectedType);
+      if (_selectedType == model.TransactionType.expense) {
+        _expenseAmount = widget.transaction!.amount;
+        _expenseExpression = widget.transaction!.amount.toString();
+        _expenseDisplay = _formatAmount(widget.transaction!.amount);
+        _expenseHasEvaluated = true;
+        _expenseNote = widget.transaction!.note;
+        _expenseCategory = widget.transaction!.category;
+        _expenseDate = widget.transaction!.date;
+      } else {
+        _incomeAmount = widget.transaction!.amount;
+        _incomeExpression = widget.transaction!.amount.toString();
+        _incomeDisplay = _formatAmount(widget.transaction!.amount);
+        _incomeHasEvaluated = true;
+        _incomeNote = widget.transaction!.note;
+        _incomeCategory = widget.transaction!.category;
+        _incomeDate = widget.transaction!.date;
+      }
     }
+
+    // Set note controller to current tab's note
+    _noteController.text = _selectedType == model.TransactionType.expense
+        ? _expenseNote
+        : _incomeNote;
 
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -66,26 +165,22 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     }
   }
 
-  String _getDefaultCategoryForType(model.TransactionType type) {
-    switch (type) {
-      case model.TransactionType.expense:
-        return 'Ăn uống';
-      case model.TransactionType.income:
-        return 'Lương';
-      case model.TransactionType.loan:
-        return 'Cho vay';
-    }
-  }
-
   void _onTypeChanged(model.TransactionType type) {
-    if (_isTypeLocked && _selectedType != type) return;
     if (_selectedType == type) return;
+
+    // Save current note before switching
+    if (_selectedType == model.TransactionType.expense) {
+      _expenseNote = _noteController.text;
+    } else {
+      _incomeNote = _noteController.text;
+    }
+
     setState(() {
       _selectedType = type;
-      final categories = _currentCategories;
-      if (_selectedCategory == null || !categories.contains(_selectedCategory)) {
-        _selectedCategory = _getDefaultCategoryForType(type);
-      }
+      // Load note for new tab
+      _noteController.text = _selectedType == model.TransactionType.expense
+          ? _expenseNote
+          : _incomeNote;
     });
   }
 
@@ -110,11 +205,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       return value.toInt().toString();
     }
     return value.toString();
-  }
-
-  void _lockTypeIfNeeded() {
-    if (_isTypeLocked) return;
-    _isTypeLocked = true;
   }
 
   String _formatNumericToken(String token) {
@@ -173,10 +263,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
   void _onNumberPressed(String number) {
     setState(() {
-      if (number != 'C') {
-        _lockTypeIfNeeded();
-      }
-
       if (number == 'C') {
         _calculatorExpression = '0';
         _currentAmount = 0;
@@ -292,11 +378,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
       setState(() {
         _currentAmount = result;
-        _amountController.text = result.toString();
         _displayText = _formatAmount(result);
         _calculatorExpression = _toEditableNumber(result);
         _hasEvaluatedExpression = true;
-        _lockTypeIfNeeded();
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -533,19 +617,22 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final onGreen = isDark ? Colors.white : Colors.black;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: const Color(0xFF34C759),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.close, color: Colors.white),
+          icon: Icon(Icons.close, color: onGreen),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text(
+        title: Text(
           'Thêm giao dịch',
           style: TextStyle(
-            color: Colors.white,
+            color: onGreen,
             fontSize: 18,
             fontWeight: FontWeight.w600,
           ),
@@ -638,7 +725,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                         onPressed: _saveTransaction,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF34C759),
-                          foregroundColor: Colors.white,
+                          foregroundColor: onGreen,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -696,19 +783,17 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     required String label,
     required model.TransactionType type,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isSelected = _selectedType == type;
-    final isEnabled = !_isTypeLocked || isSelected;
     return GestureDetector(
-      onTap: isEnabled ? () => _onTypeChanged(type) : null,
+      onTap: () => _onTypeChanged(type),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
           color: isSelected
               ? Colors.white
-              : (isEnabled
-                  ? Colors.white.withValues(alpha: 0.25)
-                  : Colors.white.withValues(alpha: 0.12)),
+              : Colors.white.withValues(alpha: 0.25),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Text(
@@ -717,7 +802,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           style: TextStyle(
             color: isSelected
                 ? const Color(0xFF34C759)
-                : (isEnabled ? Colors.white : Colors.white70),
+                : (isDark
+                      ? Colors.white.withValues(alpha: 0.95)
+                      : Colors.black.withValues(alpha: 0.92)),
             fontSize: 16,
             fontWeight: FontWeight.w700,
           ),
@@ -749,9 +836,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 onChanged: (value) {
                   setState(() {
                     _selectedCategory = value;
-                    if (value != null) {
-                      _lockTypeIfNeeded();
-                    }
                   });
                 },
               ),
@@ -795,7 +879,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                         categories.add(newCategory);
                   }
                   _selectedCategory = newCategory;
-                  _lockTypeIfNeeded();
                   _newCategoryController.clear();
                 });
                 Navigator.of(context).pop();
@@ -812,10 +895,11 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     return TextField(
       controller: _noteController,
       onChanged: (value) {
-        if (value.trim().isNotEmpty) {
-          setState(() {
-            _lockTypeIfNeeded();
-          });
+        // Update note for current tab
+        if (_selectedType == model.TransactionType.expense) {
+          _expenseNote = value;
+        } else {
+          _incomeNote = value;
         }
       },
       decoration: const InputDecoration(
@@ -980,6 +1064,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   }
 
   Widget _buildCalcButton(String text, VoidCallback onPressed, {bool isOperator = false, bool isClear = false, bool isBackspace = false, bool isInput = false}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.all(2),
@@ -990,7 +1075,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               ? const Color(0xFF34C759)
               : const Color(0xFFEFF8F1),
             foregroundColor: isOperator || isClear || isBackspace || isInput
-              ? Colors.white
+              ? (isDark ? Colors.white : Colors.black)
               : const Color(0xFF1F2937),
             padding: const EdgeInsets.symmetric(vertical: 16),
             shape: RoundedRectangleBorder(
@@ -1009,7 +1094,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   
   @override
   void dispose() {
-    _amountController.dispose();
     _noteController.dispose();
     _newCategoryController.dispose();
     super.dispose();

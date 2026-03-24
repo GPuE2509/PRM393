@@ -46,6 +46,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
         userId: widget.userId,
         username: widget.username,
         refreshToken: _dataRefreshToken,
+        onNavigateToTransactionBook: () => _onTapTab(1),
       ),
       TransactionBookScreen(
         key: ValueKey(_dataRefreshToken),
