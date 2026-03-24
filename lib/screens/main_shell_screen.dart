@@ -38,6 +38,9 @@ class _MainShellScreenState extends State<MainShellScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bg = isDark ? const Color(0xFF0B0D12) : Colors.white;
+
     final tabs = [
       HomeScreen(
         userId: widget.userId,
@@ -50,12 +53,12 @@ class _MainShellScreenState extends State<MainShellScreen> {
         refreshToken: _dataRefreshToken,
         onTransactionChanged: _onTransactionChanged,
       ),
-      const BudgetScreen(),
+      BudgetScreen(userId: widget.userId, refreshToken: _dataRefreshToken),
       AccountScreen(userId: widget.userId, username: widget.username),
     ];
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: bg,
       extendBody: true,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Transform.translate(
@@ -70,7 +73,8 @@ class _MainShellScreenState extends State<MainShellScreen> {
             onPressed: () async {
               final result = await Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => AddTransactionScreen(userId: widget.userId),
+                  builder: (context) =>
+                      AddTransactionScreen(userId: widget.userId),
                 ),
               );
               if (result == true) {
@@ -98,13 +102,12 @@ class _BottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const labels = [
-      'Tổng quan',
-      'Sổ giao dịch',
-      '',
-      'Ngân sách',
-      'Tài khoản',
-    ];
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final barBg = isDark ? const Color(0xFF171A21) : Colors.white;
+    final borderColor = isDark ? const Color(0xFF2F3442) : const Color(0xFFDCEAD7);
+    final inactive = isDark ? const Color(0xFF9CA3AF) : const Color(0xFF8AA18F);
+
+    const labels = ['Tổng quan', 'Sổ giao dịch', '', 'Ngân sách', 'Tài khoản'];
     const icons = [
       Icons.home_outlined,
       Icons.account_balance_wallet_outlined,
@@ -115,9 +118,9 @@ class _BottomNavigation extends StatelessWidget {
 
     return Container(
       height: 92,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Color(0xFFDCEAD7))),
+      decoration: BoxDecoration(
+        color: barBg,
+        border: Border(top: BorderSide(color: borderColor)),
       ),
       child: Row(
         children: List.generate(5, (index) {
@@ -140,7 +143,7 @@ class _BottomNavigation extends StatelessWidget {
                       icons[index],
                       color: selected
                           ? const Color(0xFF34C759)
-                          : const Color(0xFF8AA18F),
+                          : inactive,
                       size: 31,
                     ),
                     const SizedBox(height: 6),
@@ -151,8 +154,8 @@ class _BottomNavigation extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: selected
-                          ? const Color(0xFF34C759)
-                          : const Color(0xFF8AA18F),
+                            ? const Color(0xFF34C759)
+                            : inactive,
                         fontSize: 12,
                         height: 1.1,
                         fontWeight: selected

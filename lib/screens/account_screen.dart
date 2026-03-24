@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../data/database_helper.dart';
+import '../services/app_theme_service.dart';
 import '../services/session_service.dart';
 import 'login_screen.dart';
 
@@ -35,9 +36,7 @@ class _AccountScreenState extends State<AccountScreen> {
 
     if (!mounted) return;
     Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (_) => LoginScreen(infoMessage: infoMessage),
-      ),
+      MaterialPageRoute(builder: (_) => LoginScreen(infoMessage: infoMessage)),
       (route) => false,
     );
   }
@@ -88,24 +87,37 @@ class _AccountScreenState extends State<AccountScreen> {
                           labelText: 'Mật khẩu cũ',
                           hintText: 'Nhập mật khẩu cũ',
                           errorText: oldPasswordError,
-                          prefixIcon: const Icon(Icons.lock_outline, color: Color(0xFF34C759)),
+                          prefixIcon: const Icon(
+                            Icons.lock_outline,
+                            color: Color(0xFF34C759),
+                          ),
                           filled: true,
                           fillColor: Colors.white,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Color(0xFFDCEAD7)),
+                            borderSide: const BorderSide(
+                              color: Color(0xFFDCEAD7),
+                            ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Color(0xFF34C759), width: 2),
+                            borderSide: const BorderSide(
+                              color: Color(0xFF34C759),
+                              width: 2,
+                            ),
                           ),
                           errorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Color(0xFF34C759)),
+                            borderSide: const BorderSide(
+                              color: Color(0xFF34C759),
+                            ),
                           ),
                           focusedErrorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Color(0xFF34C759), width: 2),
+                            borderSide: const BorderSide(
+                              color: Color(0xFF34C759),
+                              width: 2,
+                            ),
                           ),
                         ),
                         style: const TextStyle(color: Color(0xFF1F2937)),
@@ -123,24 +135,37 @@ class _AccountScreenState extends State<AccountScreen> {
                           labelText: 'Mật khẩu mới',
                           hintText: 'Ít nhất 4 ký tự',
                           errorText: newPasswordError,
-                          prefixIcon: const Icon(Icons.lock_outline, color: Color(0xFF34C759)),
+                          prefixIcon: const Icon(
+                            Icons.lock_outline,
+                            color: Color(0xFF34C759),
+                          ),
                           filled: true,
                           fillColor: Colors.white,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Color(0xFFDCEAD7)),
+                            borderSide: const BorderSide(
+                              color: Color(0xFFDCEAD7),
+                            ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Color(0xFF34C759), width: 2),
+                            borderSide: const BorderSide(
+                              color: Color(0xFF34C759),
+                              width: 2,
+                            ),
                           ),
                           errorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Color(0xFF34C759)),
+                            borderSide: const BorderSide(
+                              color: Color(0xFF34C759),
+                            ),
                           ),
                           focusedErrorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Color(0xFF34C759), width: 2),
+                            borderSide: const BorderSide(
+                              color: Color(0xFF34C759),
+                              width: 2,
+                            ),
                           ),
                         ),
                         style: const TextStyle(color: Color(0xFF34C759)),
@@ -158,24 +183,37 @@ class _AccountScreenState extends State<AccountScreen> {
                           labelText: 'Xác nhận mật khẩu',
                           hintText: 'Nhập lại mật khẩu mới',
                           errorText: confirmPasswordError,
-                          prefixIcon: const Icon(Icons.verified_user_outlined, color: Color(0xFF34C759)),
+                          prefixIcon: const Icon(
+                            Icons.verified_user_outlined,
+                            color: Color(0xFF34C759),
+                          ),
                           filled: true,
                           fillColor: Colors.white,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Color(0xFFDCEAD7)),
+                            borderSide: const BorderSide(
+                              color: Color(0xFFDCEAD7),
+                            ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Color(0xFF34C759), width: 2),
+                            borderSide: const BorderSide(
+                              color: Color(0xFF34C759),
+                              width: 2,
+                            ),
                           ),
                           errorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Color(0xFF34C759)),
+                            borderSide: const BorderSide(
+                              color: Color(0xFF34C759),
+                            ),
                           ),
                           focusedErrorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Color(0xFF34C759), width: 2),
+                            borderSide: const BorderSide(
+                              color: Color(0xFF34C759),
+                              width: 2,
+                            ),
                           ),
                         ),
                         style: const TextStyle(color: Color(0xFF1F2937)),
@@ -199,19 +237,22 @@ class _AccountScreenState extends State<AccountScreen> {
                             }
                             if (newPassword.length < 4) {
                               setDialogState(() {
-                                newPasswordError = 'Mật khẩu phải ít nhất 4 ký tự';
+                                newPasswordError =
+                                    'Mật khẩu phải ít nhất 4 ký tự';
                               });
                               return;
                             }
                             if (confirmPassword.isEmpty) {
                               setDialogState(() {
-                                confirmPasswordError = 'Vui lòng xác nhận mật khẩu';
+                                confirmPasswordError =
+                                    'Vui lòng xác nhận mật khẩu';
                               });
                               return;
                             }
                             if (newPassword != confirmPassword) {
                               setDialogState(() {
-                                confirmPasswordError = 'Mật khẩu không trùng khớp';
+                                confirmPasswordError =
+                                    'Mật khẩu không trùng khớp';
                               });
                               return;
                             }
@@ -222,7 +263,10 @@ class _AccountScreenState extends State<AccountScreen> {
                           ),
                           child: const Text(
                             'Cập nhật',
-                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ),
@@ -230,7 +274,8 @@ class _AccountScreenState extends State<AccountScreen> {
                       SizedBox(
                         width: double.infinity,
                         child: TextButton(
-                          onPressed: () => Navigator.of(dialogContext).pop(false),
+                          onPressed: () =>
+                              Navigator.of(dialogContext).pop(false),
                           child: const Text(
                             'Hủy',
                             style: TextStyle(color: Color(0xFF6B7280)),
@@ -278,7 +323,9 @@ class _AccountScreenState extends State<AccountScreen> {
 
     if (!success) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Không thể cập nhật mật khẩu. Vui lòng thử lại.')),
+        const SnackBar(
+          content: Text('Không thể cập nhật mật khẩu. Vui lòng thử lại.'),
+        ),
       );
       return;
     }
@@ -358,7 +405,8 @@ class _AccountScreenState extends State<AccountScreen> {
                       SizedBox(
                         width: double.infinity,
                         child: TextButton(
-                          onPressed: () => Navigator.of(dialogContext).pop(false),
+                          onPressed: () =>
+                              Navigator.of(dialogContext).pop(false),
                           child: const Text('Hủy'),
                         ),
                       ),
@@ -387,7 +435,9 @@ class _AccountScreenState extends State<AccountScreen> {
 
     if (deletedRows <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Không thể xóa tài khoản. Vui lòng thử lại.')),
+        const SnackBar(
+          content: Text('Không thể xóa tài khoản. Vui lòng thử lại.'),
+        ),
       );
       return;
     }
@@ -402,18 +452,22 @@ class _AccountScreenState extends State<AccountScreen> {
     required VoidCallback? onPressed,
     bool isDanger = false,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final buttonBg = isDark ? const Color(0xFF171A21) : Colors.white;
+    final fg = isDark ? const Color(0xFFE5E7EB) : const Color(0xFF2D7D46);
+
     return SizedBox(
       width: double.infinity,
       child: OutlinedButton.icon(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-          side: BorderSide(
-            color: const Color(0xFF34C759),
+          side: BorderSide(color: const Color(0xFF34C759)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
           ),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-          foregroundColor: const Color(0xFF2D7D46),
-          backgroundColor: Colors.white,
+          foregroundColor: fg,
+          backgroundColor: buttonBg,
           alignment: Alignment.centerLeft,
         ),
         icon: Icon(icon, size: 20),
@@ -427,16 +481,21 @@ class _AccountScreenState extends State<AccountScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardBg = isDark ? const Color(0xFF171A21) : Colors.white;
+    final borderColor = isDark ? const Color(0xFF2F3442) : const Color(0xFFDCEAD7);
+    final primaryText = isDark ? const Color(0xFFE5E7EB) : const Color(0xFF1F2937);
+
     return SafeArea(
       child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 24, 16, 120),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Tài khoản',
               style: TextStyle(
-                color: Color(0xFF1F2937),
+                color: primaryText,
                 fontSize: 30,
                 fontWeight: FontWeight.w800,
               ),
@@ -446,9 +505,9 @@ class _AccountScreenState extends State<AccountScreen> {
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: cardBg,
                 borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: const Color(0xFFDCEAD7)),
+                border: Border.all(color: borderColor),
               ),
               child: Row(
                 children: [
@@ -465,8 +524,8 @@ class _AccountScreenState extends State<AccountScreen> {
                   Expanded(
                     child: Text(
                       widget.username,
-                      style: const TextStyle(
-                        color: Color(0xFF1F2937),
+                      style: TextStyle(
+                        color: primaryText,
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
                       ),
@@ -476,10 +535,53 @@ class _AccountScreenState extends State<AccountScreen> {
               ),
             ),
             const SizedBox(height: 20),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              decoration: BoxDecoration(
+                color: cardBg,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: borderColor),
+              ),
+              child: ValueListenableBuilder<ThemeMode>(
+                valueListenable: AppThemeService.themeModeNotifier,
+                builder: (context, mode, _) {
+                  final isDark = mode == ThemeMode.dark;
+                  return Row(
+                    children: [
+                      const Icon(
+                        Icons.dark_mode_outlined,
+                        color: Color(0xFF2D7D46),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          'Dark mode',
+                          style: TextStyle(
+                            color: primaryText,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      Switch(
+                        value: isDark,
+                        activeColor: const Color(0xFF34C759),
+                        onChanged: (value) async {
+                          await AppThemeService.setDarkMode(value);
+                        },
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 12),
             _actionButton(
               label: 'Đổi mật khẩu',
               icon: Icons.lock_outline,
-              onPressed: (_isDeletingAccount || _isNavigating || _isChangingPassword)
+              onPressed:
+                  (_isDeletingAccount || _isNavigating || _isChangingPassword)
                   ? null
                   : _changePassword,
             ),
@@ -489,7 +591,9 @@ class _AccountScreenState extends State<AccountScreen> {
               icon: Icons.delete_outline,
               isDanger: true,
               onPressed:
-                  (_isDeletingAccount || _isNavigating || _isChangingPassword) ? null : _deleteAccount,
+                  (_isDeletingAccount || _isNavigating || _isChangingPassword)
+                  ? null
+                  : _deleteAccount,
             ),
             if (_isDeletingAccount || _isChangingPassword) ...[
               const SizedBox(height: 10),
@@ -506,7 +610,9 @@ class _AccountScreenState extends State<AccountScreen> {
               label: 'Đăng xuất',
               icon: Icons.logout_rounded,
               onPressed:
-                  (_isDeletingAccount || _isNavigating || _isChangingPassword) ? null : _logout,
+                  (_isDeletingAccount || _isNavigating || _isChangingPassword)
+                  ? null
+                  : _logout,
             ),
           ],
         ),
