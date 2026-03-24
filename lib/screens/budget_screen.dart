@@ -217,21 +217,23 @@ class _BudgetScreenState extends State<BudgetScreen> {
       return;
     }
 
+    final colorScheme = Theme.of(context).colorScheme;
     final selected = await showModalBottomSheet<_BudgetCardData>(
       context: context,
-      backgroundColor: const Color(0xFF17181D),
+      backgroundColor: colorScheme.surfaceContainerHigh,
       isScrollControlled: true,
       builder: (context) {
+        final sheetColorScheme = Theme.of(context).colorScheme;
         return SafeArea(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
+                Text(
                   'Ngân sách đã kết thúc',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: sheetColorScheme.onSurface,
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                   ),
@@ -249,15 +251,19 @@ class _BudgetScreenState extends State<BudgetScreen> {
                         onTap: () => Navigator.of(context).pop(item),
                         title: Text(
                           item.budget.category ?? 'Tổng cộng',
-                          style: const TextStyle(color: Colors.white),
+                          style: TextStyle(
+                            color: sheetColorScheme.onSurface,
+                          ),
                         ),
                         subtitle: Text(
                           '${DateFormat('dd/MM/yyyy').format(item.budget.startDate)} - ${DateFormat('dd/MM/yyyy').format(item.budget.endDate)}',
-                          style: const TextStyle(color: Color(0xFF9CA3AF)),
+                          style: TextStyle(
+                            color: sheetColorScheme.onSurfaceVariant,
+                          ),
                         ),
-                        trailing: const Icon(
+                        trailing: Icon(
                           Icons.chevron_right,
-                          color: Color(0xFF9CA3AF),
+                          color: sheetColorScheme.onSurfaceVariant,
                         ),
                       );
                     },
@@ -772,6 +778,13 @@ class _BudgetScreenState extends State<BudgetScreen> {
   }
 
   Widget _periodTabs() {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final chipBackground = isDark
+        ? const Color(0xFF1F2129)
+        : colorScheme.surfaceContainerHighest;
+    final unselectedLabel = isDark ? Colors.white : Colors.black;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       width: double.infinity,
@@ -791,14 +804,14 @@ class _BudgetScreenState extends State<BudgetScreen> {
                   });
                 },
                 selectedColor: const Color(0xFF22C55E),
-                backgroundColor: const Color(0xFF1F2129),
+                backgroundColor: chipBackground,
                 side: BorderSide(
                   color: selected
                       ? const Color(0xFF22C55E)
                       : const Color(0xFF343845),
                 ),
                 labelStyle: TextStyle(
-                  color: selected ? Colors.black : Colors.white,
+                  color: selected ? Colors.black : unselectedLabel,
                   fontWeight: FontWeight.w700,
                 ),
                 shape: RoundedRectangleBorder(

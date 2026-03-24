@@ -52,13 +52,13 @@ class _Prm393AppState extends State<Prm393App> {
         backgroundColor: isDark
             ? const Color(0xFF0F1117)
             : const Color(0xFF34C759),
-        foregroundColor: Colors.white,
+        foregroundColor: isDark ? Colors.white : Colors.black,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: false,
         titleTextStyle: textTheme.titleLarge?.copyWith(
           fontWeight: FontWeight.w700,
-          color: isDark ? Colors.white : Colors.white,
+          color: isDark ? Colors.white : Colors.black,
         ),
       ),
       cardTheme: CardThemeData(

@@ -3,18 +3,21 @@ import 'package:intl/intl.dart';
 
 import '../data/database_helper.dart';
 import '../models/transaction.dart' as model;
+import '../models/budget.dart';
 import 'search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final int userId;
   final String username;
   final int refreshToken;
+  final VoidCallback? onNavigateToTransactionBook;
 
   const HomeScreen({
     super.key,
     required this.userId,
     required this.username,
     this.refreshToken = 0,
+    this.onNavigateToTransactionBook,
   });
 
   @override
@@ -48,6 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<_TrendPoint> _monthTrend = [];
   bool _isBalanceVisible = true;
   bool _isLoading = true;
+  List<_BudgetNotification> _notifications = [];
 
   String _formatNumber(double number) {
     return NumberFormat('#,###').format(number);
@@ -211,6 +215,34 @@ class _HomeScreenState extends State<HomeScreen> {
         DateFormat('dd/MM'),
       );
 
+      // Check for budget overruns
+      final budgets = await DatabaseHelper.instance.getBudgetsByUser(
+        widget.userId,
+      );
+      final notifications = <_BudgetNotification>[];
+
+      for (final budget in budgets) {
+        final now = DateTime.now();
+        if (budget.endDate.isBefore(now)) continue;
+
+        final spent = await DatabaseHelper.instance.getExpenseTotalInRangeForBudget(
+          userId: widget.userId,
+          startDate: budget.startDate,
+          endDate: budget.endDate,
+          category: budget.category,
+        );
+
+        if (spent > budget.amount) {
+          notifications.add(_BudgetNotification(
+            category: budget.category ?? 'Tổng chi tiêu',
+            budgetAmount: budget.amount,
+            spentAmount: spent,
+            startDate: budget.startDate,
+            endDate: budget.endDate,
+          ));
+        }
+      }
+
       setState(() {
         _totalExpense = totalExpense;
         _totalIncome = totalIncome;
@@ -232,6 +264,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _weekTrend = weekTrend;
         _monthTrend = monthTrend;
         _balance = _totalIncome - _totalExpense;
+        _notifications = notifications;
         _isLoading = false;
       });
     } catch (e) {
@@ -1204,26 +1237,13 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       child: Column(
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  'Chi tiêu nhiều nhất',
-                  style: TextStyle(
-                    color: primaryText,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-              TextButton(
-                onPressed: () {},
-                child: const Text(
-                  'Xem chi tiết',
-                  style: TextStyle(color: Color(0xFF22C55E)),
-                ),
-              ),
-            ],
+          Text(
+            'Chi tiêu nhiều nhất',
+            style: TextStyle(
+              color: primaryText,
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           const SizedBox(height: 8),
           Container(
@@ -1389,7 +1409,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: widget.onNavigateToTransactionBook,
                 child: const Text(
                   'Xem tất cả',
                   style: TextStyle(color: Color(0xFF22C55E)),
@@ -1464,6 +1484,144 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _showNotificationsBottomSheet(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surfaceColor = isDark ? const Color(0xFF17181D) : Colors.white;
+    final primaryText = isDark ? Colors.white : const Color(0xFF1F2937);
+    final secondaryText = isDark
+        ? const Color(0xFF9CA3AF)
+        : const Color(0xFF6B7280);
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: surfaceColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.warning_amber_rounded,
+                      color: Color(0xFFB42318), size: 28),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      'Thông báo vượt ngân sách',
+                      style: TextStyle(
+                        color: primaryText,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: Icon(Icons.close, color: secondaryText),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Flexible(
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: _notifications.length,
+                  separatorBuilder: (_, __) => const Divider(height: 20),
+                  itemBuilder: (context, index) {
+                    final notification = _notifications[index];
+                    final overAmount = notification.spentAmount -
+                        notification.budgetAmount;
+                    final overPercent = ((overAmount /
+                                notification.budgetAmount) *
+                            100)
+                        .round();
+
+                    return Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFB42318).withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: const Color(0xFFB42318).withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            notification.category,
+                            style: TextStyle(
+                              color: primaryText,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  'Ngân sách: ${_formatNumber(notification.budgetAmount)} đ',
+                                  style: TextStyle(
+                                    color: secondaryText,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  'Đã chi: ${_formatNumber(notification.spentAmount)} đ',
+                                  style: const TextStyle(
+                                    color: Color(0xFFB42318),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFB42318),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              'Vượt ${_formatNumber(overAmount)} đ ($overPercent%)',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isNarrow = _isNarrow(context);
@@ -1531,35 +1689,40 @@ class _HomeScreenState extends State<HomeScreen> {
                   clipBehavior: Clip.none,
                   children: [
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        if (_notifications.isNotEmpty) {
+                          _showNotificationsBottomSheet(context);
+                        }
+                      },
                       icon: Icon(
                         Icons.notifications_none,
                         color: const Color(0xFF2D7D46),
                         size: isNarrow ? 32 : 38,
                       ),
                     ),
-                    Positioned(
-                      right: 5,
-                      top: 4,
-                      child: Container(
-                        width: 24,
-                        height: 24,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF34C759),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Center(
-                          child: Text(
-                            '7',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
+                    if (_notifications.isNotEmpty)
+                      Positioned(
+                        right: 5,
+                        top: 4,
+                        child: Container(
+                          width: 24,
+                          height: 24,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFB42318),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                            child: Text(
+                              '${_notifications.length}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
                   ],
                 ),
               ],
@@ -1630,4 +1793,20 @@ class _TrendPoint {
   final double amount;
 
   const _TrendPoint({required this.label, required this.amount});
+}
+
+class _BudgetNotification {
+  final String category;
+  final double budgetAmount;
+  final double spentAmount;
+  final DateTime startDate;
+  final DateTime endDate;
+
+  const _BudgetNotification({
+    required this.category,
+    required this.budgetAmount,
+    required this.spentAmount,
+    required this.startDate,
+    required this.endDate,
+  });
 }

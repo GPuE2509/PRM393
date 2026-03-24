@@ -12,7 +12,7 @@ class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._internal();
 
   static const _databaseName = 'prm393_expense_managers.db';
-  static const _databaseVersion = 7;
+  static const _databaseVersion = 11;
 
   static const userTable = 'users';
   static const expenseTable = 'expenses';
