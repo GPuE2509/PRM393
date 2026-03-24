@@ -52,6 +52,7 @@ class _Prm393AppState extends State<Prm393App> {
         backgroundColor: isDark
             ? const Color(0xFF0F1117)
             : const Color(0xFF34C759),
+        foregroundColor: Colors.white,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: false,
@@ -59,7 +60,6 @@ class _Prm393AppState extends State<Prm393App> {
           fontWeight: FontWeight.w700,
           color: isDark ? Colors.white : Colors.white,
         ),
-        iconTheme: const IconThemeData(color: Colors.white),
       ),
       cardTheme: CardThemeData(
         elevation: 0,
